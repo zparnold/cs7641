@@ -6,26 +6,16 @@ from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from sklearn.tree import DecisionTreeClassifier
 
 
-def main():
-
-    X = pd.read_csv('./data/adult.data', names=['age', 'workclass', 'fnlwgt','education', 'education-num', 'marital-status', 'occupation', 'relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','<=50k'])
-    X.dropna()
-    X.drop_duplicates()
-    X = X[X['workclass'] != '?']
-    X = X[X['occupation'] != '?']
-    X = X[X['education'] != '?']
-    X = X[X['marital-status'] != '?']
-    X = X[X['relationship'] != '?']
-    X = X[X['race'] != '?']
-    X = X[X['sex'] != '?']
-    X = X[X['native-country'] != '?']
-    le = LabelEncoder()
-    X['<=50k'] = le.fit_transform(X['<=50k'])
-    y = X['<=50k']
-    X = X.drop(['<=50k'], axis=1)
+def other_main():
+    ds2 = pd.read_csv('./data/bank-additional.csv', delimiter=';')
+    #names=['age', 'job', 'marital', 'education', 'default', 'housing', 'loan','contact', 'month', 'day_of_week', 'duration', 'campaign', 'pdays', 'previous', 'poutcome', 'emp.var.rate', 'cons.price.idx', 'cons.conf.idx', 'euribor3m', 'nr.employed']
+    ds2.dropna()
+    ds2.drop_duplicates()
+    y = ds2['y']
+    ds2 = ds2.drop(['y'], axis=1)
     clf = tree.DecisionTreeClassifier(random_state=0)
     enc = OrdinalEncoder()
-    X_trans = enc.fit_transform(X)
+    X_trans = enc.fit_transform(ds2)
     X_train, X_test, y_train, y_test = train_test_split(X_trans, y, random_state=0)
     path = clf.cost_complexity_pruning_path(X_train, y_train)
     ccp_alphas, impurities = path.ccp_alphas, path.impurities
@@ -69,5 +59,7 @@ def main():
             drawstyle="steps-post")
     ax.legend()
     plt.show()
+
+
 if __name__ == '__main__':
-    main()
+    other_main()
