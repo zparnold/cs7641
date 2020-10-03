@@ -29,6 +29,7 @@ def main():
                                                                         random_state=1)
     print(best_state)
     print(best_fitness)
+    print(timing_curve)
     x_s.append(np.arange(0, len(learning_curve)))
     y_s.append(learning_curve)
     w_s.append(timing_curve)
