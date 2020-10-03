@@ -21,7 +21,7 @@
 \graphicspath{./}
 \newcommand{\problemone}{One Max Problem}
 \newcommand{\problemtwo}{8 Queens Problem}
-\newcommand{\problemthree}{Some other problem}
+\newcommand{\problemthree}{Traveling Salesman}
 % Document
 \begin{document}
     \thispagestyle{firstpage}
@@ -92,13 +92,14 @@
     modeled by Kullback-Libeler divergence.\cite{Isbell97} Thus it should be able to converge much faster to an optimal solution
     than a genetic algorithm for the same problem.
     The parameters I will be varying for this algorithm are:
-     \begin{itemize}
+    \begin{itemize}
         \item \texttt{max\_attempts} The number of attempts to find a neighbor with better fitness
         \item \texttt{max\_iterations} The number of times to iterations to search (this will usually be lower than \texttt{max\_attempts})
         \item \texttt{pop\_size} The number of guesses (or population count) to retain at each iteration of the search
         \item \texttt{keep\_pct} The percentage of guesses to retain between each iteration of the algorithm.
     \end{itemize}
-    \subsection{\problemone}
+
+    \subsection{\problemone \hspace{0em}; highlights advantages of MIMIC}
     The \problemone is a fitness function that seeks to maximize a vector $v$ such that:
     \begin{equation}
         \label{oneMax}
@@ -107,28 +108,67 @@
     is a maximum, where $v_i$ is the $i$th component of vector $v$ with length $n$.
     This is a relatively easy optimization problem to understand and it illustrates the effectiveness of MIMIC and Genetic Algorithms
     quite nicely from an efficiency standpoint.
+    The best values found for each algorithm were as follows:
     \linebreak
-    \begin{figure}[!htb]
-        \begin{minipage}{0.48\textwidth}
+    \begin{center}
+        \begin{tabular}{| c | c | c |}
+            \hline
+            Algorithm & Parameters                             & Value     \\
+            \hline
+            \hline
+            RHC       & Max Iterations, Max Attempts, Restarts & 40, 40, 0 \\
+            \hline
+            SA & Max Iterations, Max Attempts, Decay Schedule & 180, 180, Exponential \\
+            \hline
+            GA & Max Iterations, Max Attempts, Pop Size, Mutation Prob & 10,10,0.1,100 \\
+            \hline
+            MIMIC & Max Iterations, Max Attempts, Pop Size, Keep \% & 10,10,0.1,300\\
+            \hline
+        \end{tabular}
+    \end{center}
+    As you can see, MIMIC converged to the correct optimal value within 10 iterations of the function making it a very
+    powerful algorithm for this particular problem type.
+    \linebreak
+    \begin{figure}
+        \begin{minipage}{0.5\textwidth}
             \centering
-            \includegraphics[width=.7\linewidth]{eightqueens.png}
-            \caption{Interpolation for Data 1}\label{Fig:Data1}
+            \includegraphics[width=.9\linewidth]{onemax1.png}
+            \caption{Function value by iteration count}\label{Fig:Data1}
         \end{minipage}\hfill
-        \begin{minipage}{0.48\textwidth}
+        \begin{minipage}{0.5\textwidth}
             \centering
-            \includegraphics[width=.7\linewidth]{onemax.png}
-            \caption{Interpolation for Data 2}\label{Fig:Data2}
+            \includegraphics[width=.9\linewidth]{onemax2.png}
+            \caption{Total time by iteration count}\label{Fig:Data2}
         \end{minipage}
     \end{figure}
 
-    \subsection{\problemtwo}
+    Figures 1 and 2 illustrate how quickly MIMIC converged and that it took less wall clock time to do so than Genetic Algorithms
+    (a similar class of algorithm.)
+    This result is most likely due to the fact that while MIMIC requires time to calculate probability density functions,
+    by using this to improve its guess each time it saw the most dramatic improvement between iterations.
+    By contrast Simulated Annealing took over 175 iterations to converge to the the correct value.
+
+
+    \subsection{\problemtwo \hspace{0em}; highlights advantages of Simulated Annealing}
     The eight queens problem is a specific implementation of the n-queens optimization problem.\cite{Russel10} It poses
     an $n x n$ board like in chess where $n$ queens need to be placed such that a minimum number of queens could "attack"
     each other (diagonally, horizontally, or vertically.) So the space to search is a collection of vectors of 8 elements
     where each element is an integer between 0 and 7 and represents where the queen is on that column of the chess board.
     \linebreak
+    \begin{figure}[!htb]
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.9\linewidth]{eightqueens1.png}
+            \caption{Interpolation for Data 1}\label{Fig:Eight Queens Iterations vs Fitness Function Value}
+        \end{minipage}\hfill
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.9\linewidth]{eightqueens2.png}
+            \caption{Interpolation for Data 2}\label{Fig:Eight Queens Iterations vs Time}
+        \end{minipage}
+    \end{figure}
 
-    \subsection{\problemthree}
+    \subsection{\problemthree \hspace{0em}; highlights advantages of Genetic Algorithms}
 
 
     \section{Neural Network Weight Optimization}

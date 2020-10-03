@@ -4,5 +4,5 @@
 * numpy
 * mlrose
 
-4) You will need to replace the file `algorithms.py`
-
+4) You will need to replace the file `algorithms.py` in the mlrose package with the one that's in this folder for all the functions to work.
+5) To execute an experiment like eight queens, run `python eightqueens.py` any of these files will generate the output and graphs

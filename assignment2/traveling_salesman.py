@@ -8,37 +8,23 @@ import math
 import matplotlib.pyplot as plt
 
 
-# Define alternative N-Queens fitness function for maximization problem
-def queens_max(state):
-    # Initialize counter
-    fitness = 0
-
-    # For all pairs of queens
-    for i in range(len(state) - 1):
-        for j in range(i + 1, len(state)):
-
-            # Check for horizontal, diagonal-up and diagonal-down attacks
-            if (state[j] != state[i]) \
-                    and (state[j] != state[i] + (j - i)) \
-                    and (state[j] != state[i] - (j - i)):
-                # If no attacks, then increment counter
-                fitness += 1
-
-    return fitness
-
-
 def main():
-    name_of_exp = "Eight Queens"
-    fitness = mlrose.CustomFitness(queens_max)
-    problem = mlrose.DiscreteOpt(length=8, fitness_fn=fitness, maximize=True, max_val=8)
+    name_of_exp = "TSP"
+
+    # Create list of city coordinates
+    coords_list = [(1, 1), (4, 2), (5, 2), (6, 4), (4, 4), (3, 6), (1, 5), (2, 3)]
+
+    # Initialize fitness function object using coords_list
+    fitness_coords = mlrose.TravellingSales(coords=coords_list)
+    problem = mlrose.TSPOpt(length=8, fitness_fn=fitness_coords,
+                            maximize=False)
 
     # Define initial state
-    init_state = np.array([0, 1, 2, 3, 4, 5, 6, 7])
     x_s = []
     y_s = []
     z_s = ['RHC', 'SA', 'GA', 'MIMIC']
     w_s = []
-    max_val = 28.0
+    max_val = 19.0
     found_flag = False
     for restarts in np.arange(0, 5):
         if found_flag:
@@ -50,10 +36,9 @@ def main():
             best_state, best_fitness, learning_curve, timing_curve = mlrose.random_hill_climb(problem, max_attempts=int(
                 max_iter_atts), max_iters=int(max_iter_atts),
                                                                                               restarts=int(restarts),
-                                                                                              init_state=init_state,
                                                                                               curve=True,
                                                                                               random_state=1)
-            if best_fitness == max_val:
+            if best_fitness <= max_val:
                 x_s.append(np.arange(0, len(learning_curve)))
                 y_s.append(learning_curve)
                 w_s.append(timing_curve)
@@ -71,13 +56,14 @@ def main():
             if found_flag:
                 break
             best_state, best_fitness, learning_curve, timing_curve = mlrose.simulated_annealing(problem,
-                                                                                                max_attempts=int(max_iter_atts),
-                                                                                                max_iters=int(max_iter_atts),
+                                                                                                max_attempts=int(
+                                                                                                    max_iter_atts),
+                                                                                                max_iters=int(
+                                                                                                    max_iter_atts),
                                                                                                 schedule=sched,
-                                                                                                init_state=init_state,
                                                                                                 curve=True,
                                                                                                 random_state=1)
-            if best_fitness == max_val:
+            if best_fitness <= max_val:
                 x_s.append(np.arange(0, len(learning_curve)))
                 y_s.append(learning_curve)
                 w_s.append(timing_curve)
@@ -97,13 +83,16 @@ def main():
             for max_iter_atts in np.arange(100, 1000, 100):
                 if found_flag:
                     break
-                best_state, best_fitness, learning_curve, timing_curve = mlrose.genetic_alg(problem, pop_size=int(pop_size),
+                best_state, best_fitness, learning_curve, timing_curve = mlrose.genetic_alg(problem,
+                                                                                            pop_size=int(pop_size),
                                                                                             mutation_prob=prob,
-                                                                                            max_attempts=int(max_iter_atts),
-                                                                                            max_iters=int(max_iter_atts),
+                                                                                            max_attempts=int(
+                                                                                                max_iter_atts),
+                                                                                            max_iters=int(
+                                                                                                max_iter_atts),
                                                                                             curve=True,
                                                                                             random_state=1)
-                if best_fitness == max_val:
+                if best_fitness <= max_val:
                     x_s.append(np.arange(0, len(learning_curve)))
                     y_s.append(learning_curve)
                     w_s.append(timing_curve)
@@ -127,10 +116,11 @@ def main():
                 best_state, best_fitness, learning_curve, timing_curve = mlrose.mimic(problem, pop_size=int(pop_size),
                                                                                       keep_pct=prob,
                                                                                       max_attempts=int(max_iter_atts),
-                                                                                      max_iters=int(max_iter_atts), curve=True,
+                                                                                      max_iters=int(max_iter_atts),
+                                                                                      curve=True,
                                                                                       random_state=1,
                                                                                       fast_mimic=True)
-                if best_fitness == max_val:
+                if best_fitness <= max_val:
                     x_s.append(np.arange(0, len(learning_curve)))
                     y_s.append(learning_curve)
                     w_s.append(timing_curve)
@@ -140,7 +130,6 @@ def main():
                     print(prob)
                     print(pop_size)
                     found_flag = True
-
 
     for x, y, z in zip(x_s, y_s, z_s):
         plt.plot(x, y, label=z)
