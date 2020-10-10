@@ -30,17 +30,16 @@
     \section{Introduction}
     In this paper I will be exploring the performance and trade-offs of four randomized optimization algorithms: randomized hill climbing,
     simulated annealing, genetic algorithms, and MIMIC against three problems.
-    Later in the paper I will reexamine work I did previously in Assigment 1 and attempt to optimize the weights of a multi-layered perceptron using these same
-    four algorithms.
+    Later in the paper I will reexamine work I did previously in Assigment 1 and attempt to optimize the weights of a multi-layered perceptron neural network
+    using these same four algorithms.
     For the purposes of this assignment I used the mlrose library\cite{Hayes19} which was publicly available.
     Note that I made some modifications to the library on my computer to be able to generate timing curves (and I do not
     know how to publish a Python package so I will include instructions for how to get my code in the Readme.)
 
 
-    \section{Comparison of Randomized Optimization Algorithms}
+    \section{Description of Randomized Optimization Algorithms}\label{sec:description-of-randomized-optimization-algorithms}
     This section is dedicated to exploring a comparison of four randomized optimization algorithms against example problems
     which should highlight their relative strenghts and weaknesses.
-    The algorithms are randomized hill climbing, simulated annealing, genetic algorithms, and MIMIC.
     I will briefly introduce parameters I will be varying for each algorithm here and then we will compare their performance
     in each problems subsection below.
     \subsubsection*{Randomized Hill Climbing}
@@ -106,39 +105,37 @@
         \sum_{i=0}^{n-1} v_i
     \end{equation}
     is a maximum, where $v_i$ is the $i$th component of vector $v$ with length $n$.
-    This is a relatively easy optimization problem to understand and it illustrates the effectiveness of MIMIC and Genetic Algorithms
+    This is a relatively easy optimization problem to understand and it illustrates the effectiveness of MIMIC
     quite nicely from an efficiency standpoint.
     The best values found for each algorithm were as follows:
-    \linebreak
     \begin{center}
         \begin{tabular}{| c | c | c |}
             \hline
-            Algorithm & Parameters                             & Value     \\
+            Algorithm & Parameters                                            & Value                 \\
             \hline
             \hline
-            RHC       & Max Iterations, Max Attempts, Restarts & 40, 40, 0 \\
+            RHC       & Max Iterations, Max Attempts, Restarts                & 40, 40, 0             \\
             \hline
-            SA & Max Iterations, Max Attempts, Decay Schedule & 180, 180, Exponential \\
+            SA        & Max Iterations, Max Attempts, Decay Schedule          & 180, 180, Exponential \\
             \hline
-            GA & Max Iterations, Max Attempts, Pop Size, Mutation Prob & 10,10,0.1,100 \\
+            GA        & Max Iterations, Max Attempts, Pop Size, Mutation Prob & 10,10,100,0.1         \\
             \hline
-            MIMIC & Max Iterations, Max Attempts, Pop Size, Keep \% & 10,10,0.1,300\\
+            MIMIC     & Max Iterations, Max Attempts, Pop Size, Keep \%       & 10,10,0.1,300         \\
             \hline
         \end{tabular}
     \end{center}
     As you can see, MIMIC converged to the correct optimal value within 10 iterations of the function making it a very
     powerful algorithm for this particular problem type.
-    \linebreak
     \begin{figure}
         \begin{minipage}{0.5\textwidth}
             \centering
             \includegraphics[width=.9\linewidth]{onemax1.png}
-            \caption{Function value by iteration count}\label{Fig:Data1}
+            \caption{One Max Iterations vs Function Value}\label{Fig:One Max Iterations vs Function Value}
         \end{minipage}\hfill
         \begin{minipage}{0.5\textwidth}
             \centering
             \includegraphics[width=.9\linewidth]{onemax2.png}
-            \caption{Total time by iteration count}\label{Fig:Data2}
+            \caption{One Max Iterations vs Time}\label{Fig:One Max Iterations vs Time}
         \end{minipage}
     \end{figure}
 
@@ -147,31 +144,161 @@
     This result is most likely due to the fact that while MIMIC requires time to calculate probability density functions,
     by using this to improve its guess each time it saw the most dramatic improvement between iterations.
     By contrast Simulated Annealing took over 175 iterations to converge to the the correct value.
-
+    The reason for this is due to the schedule of decay of SA. Since this problem has only one best value for any n
+    dimensional input (a vector containing all 1's,) by considering worse values as potentially better (in order to
+    to avoid local maxima).
+    The same could be said for randomized hill climbing.
+    Given that it will randomly restart in a different location it could potentially sabotage its own search for a maximum
+    because the solution has only one max.
+    The best performing class of algorithms were GA's and MIMIC for this problem, with MIMIC being a clear winner in terms
+    of number of iterations required to find the optimal value.
+    Because GAs/MIMIC are predisposed to favor well fitting values from previous generations to create a new generation
+    of values this problem highlights this strength.
+    Since there is only one max and by flipping one bit each time from a 0 to a 1 increases fitness, each algorithm would
+    do successively better with each iteration.
+    MIMIC did especially well because it could sample from a probability distribution of good values to create the next generation
+    increasing the speed (in terms of iterations) of converging to the optimal value.
+    It is worth noting however from a wall-clock time perspective, in general MIMIC performs worse than Genetic Algorithms
+    because of the time required to recalculate $p^{\theta_i} (x)$ for the next generation as given by the definition of $p^{\theta_i} (x)$.\cite{Isbell97}
 
     \subsection{\problemtwo \hspace{0em}; highlights advantages of Simulated Annealing}
     The eight queens problem is a specific implementation of the n-queens optimization problem.\cite{Russel10} It poses
     an $n x n$ board like in chess where $n$ queens need to be placed such that a minimum number of queens could "attack"
     each other (diagonally, horizontally, or vertically.) So the space to search is a collection of vectors of 8 elements
     where each element is an integer between 0 and 7 and represents where the queen is on that column of the chess board.
-    \linebreak
-    \begin{figure}[!htb]
+    \begin{figure}
         \begin{minipage}{0.5\textwidth}
             \centering
             \includegraphics[width=0.9\linewidth]{eightqueens1.png}
-            \caption{Interpolation for Data 1}\label{Fig:Eight Queens Iterations vs Fitness Function Value}
+            \caption{Eight Queens Iterations vs Fitness Function Value}\label{Fig:Eight Queens Iterations vs Fitness Function Value}
         \end{minipage}\hfill
         \begin{minipage}{0.5\textwidth}
             \centering
             \includegraphics[width=0.9\linewidth]{eightqueens2.png}
-            \caption{Interpolation for Data 2}\label{Fig:Eight Queens Iterations vs Time}
+            \caption{Eight Queens Iterations vs Time}\label{Fig:Eight Queens Iterations vs Time}
         \end{minipage}
     \end{figure}
+    As illustrated below, this optimization problem favors the simulated annealing algorithm implementation approach I have chosen
+    in terms of function iteration count required to achieve an optimal placement.
+    The best values found for each algorithm were as follows:
+    \begin{center}
+        \begin{tabular}{| c | c | c |}
+            \hline
+            Algorithm & Parameters                                            & Value                 \\
+            \hline
+            \hline
+            RHC       & Max Iterations, Max Attempts, Restarts                & 160, 160, 1           \\
+            \hline
+            SA        & Max Iterations, Max Attempts, Decay Schedule          & 160, 160, Exponential \\
+            \hline
+            GA        & Max Iterations, Max Attempts, Pop Size, Mutation Prob & 600,600,100,0.1       \\
+            \hline
+            MIMIC     & Max Iterations, Max Attempts, Pop Size, Keep \%       & 100,100,800,0.1       \\
+            \hline
+        \end{tabular}
+    \end{center}
+    The 8-Queens problem favors the Simulated Annealing algorithm I used (and somewhat the RHC algorithm as well) due to the nature of the problem.
+    Because there are at maximum 92 solutions that are valid (derived from 12 fundamental solutions,)\cite{wikipedia_2020} and
+    those maximal fitness values are dispersed throughout the space of all possible board states, algorithms like GA and
+    MIMIC are at a disadvantage, because permuting random sections of a partially-fit vector do not necessarily equate to a
+    strictly better fit vector.
+    However in the case of SA and RHC which search for any maximal value through neighbor searching, these algorithms can directly
+    compute an answer quickly often with an aggressive decay schedule since there are 92 best values each of which have the
+    same fitness function value.
+    In terms of wall clock time, Simulated Annealing did the best with a near zero wall clock time and only 160 function iterations to
+    achieve the best result.
+    While MIMIC did have a lower function iteration count required to get the best value, it used a population size of 800
+    to achieve this and at a very steep cost in terms of computation time.
+    Looking at figure 4, you can see that while Genetic Algorithms took the longest, MIMIC grew the fastest with respect to function
+    iteration count, meaning that if we were to optimize an n-queens problem ($n > 8$), the lower iteration count would stop
+    being a benefit in terms of wall-clock time quickly.
 
     \subsection{\problemthree \hspace{0em}; highlights advantages of Genetic Algorithms}
+    The \problemthree is defined by mlrose's documentation in the following way:
+    "The travelling salesperson problem (TSP) is a classic optimization problem where the goal is to determine the shortest tour of a collection of n 'cities' (i.e. nodes), starting and ending in the same city and visiting all of the other cities exactly once.
+    In such a situation, a solution can be represented by a vector of n integers, each in the range 0 to n-1, specifying the order in which the cities should be visited."\cite{Hayes19}
+    This problem is similar to the \problemtwo in that the vector represents an ordering of positions.
+    In the \problemtwo they are board postions but in \problemthree they represent an order of cities to visit.
+    Below is the table of optimal values for each function and the iteration and timing curves.
+    \begin{center}
+        \begin{tabular}{| c | c | c |}
+            \hline
+            Algorithm & Parameters                                            & Value                 \\
+            \hline
+            \hline
+            RHC       & Max Iterations, Max Attempts, Restarts                & 40, 40, 0             \\
+            \hline
+            SA        & Max Iterations, Max Attempts, Decay Schedule          & 110, 110, Exponential \\
+            \hline
+            GA        & Max Iterations, Max Attempts, Pop Size, Mutation Prob & 100,100,100,0.1       \\
+            \hline
+            MIMIC     & Max Iterations, Max Attempts, Pop Size, Keep \%       & 100,100,200,0.1       \\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    \begin{figure}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.9\linewidth]{tsp1.png}
+            \caption{TSP Iterations vs Fitness Function Value}\label{Fig:TSP Iterations vs Fitness Function Value}
+        \end{minipage}\hfill
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.9\linewidth]{tsp2.png}
+            \caption{TSP Iterations vs Time}\label{Fig:TSP Iterations vs Time}
+        \end{minipage}
+    \end{figure}
+    As you can see, the best all around algorithm in terms of speed and iteration count is Genetic Algorithms.
+    While Simulated Annealing was faster in terms of wall clock time, Genetic algorithms got to the convergence value in
+    a much shorter ($> 80$) number of iterations.
+    Simulated Annealing and RHC would have the same advantages over GA and MIMIC in terms of their ability to search neighboring
+    solutions for a max value easily as they did in 8-queens, the difference here is in the problem statement.
+    Since the \problemthree is about minimizing the number of revisits to any point, it can be thought of as a constrained
+    One Max problem (in that there is a best solution with the fewest number of revisits and there is only one global min.)
+    In this way, the problem is like a combination of One Max and 8 queens.
+    Given that, Genetic Algorithms ability to rapidly recombine better and better solutions allowed it to converge quickly
+    to the correct value.
+    The difference here is, whereas MIMIC is a variant of GA and in general performs better in the number of function iterations
+    required to solve the same problem, in this instance MIMIC never converged to the globally minimal solution and even the
+    sub optimal path ordering it proposed took 5x the amount of time as the nearest algorithm.
 
 
     \section{Neural Network Weight Optimization}
+    In this section I will be applying the algorithms (with the exception of MIMIC) from above on my original assignment 1 dataset 1 (Classifying whether
+    or not someone makes less than \textdollar50k in a year in America) and attempt to optimize a Neural Network's weights.
+    The goal is to replace backpropagation as the method of NN training with RO\@.
+    As was the case with the initial training I will be doing the following:
+    \begin{itemize}
+        \item Splitting the data into training and validation sets
+        \item Optimizing for Jaccard Accuracy Score\cite{wikipedia_2021}
+    \end{itemize}
+    If you'll recall from the previous assigment, the NN did the worst out of all of the supervised learning algorithms from
+    the previous section.
+    This was due to the networks hidden layer construction and the fact that this problem did not lend itself well to any
+    of the activation functions supplied to backpropagation as well as the fact that relative to the other learners, the
+    best NN was subject to high bias given its underfitting.
+    The best overall accuracy achieved was 75.14\% in total and that is what I targeted as an optimal value for the RO algorithms.
+    I supplied the best overall hyperparameters from the previous assignment as arguments to mlrose's function for NN weight optimization
+    to allow for a more direct comparison of results.
+    Below is a table of the optimally tuned
+
+    \begin{center}
+        \begin{tabular}{| c | c | c |}
+            \hline
+            Algorithm & Parameters                                            & Value                 \\
+            \hline
+            \hline
+            RHC       & Max Iterations, Max Attempts, Restarts                & 40, 40, 0             \\
+            \hline
+            SA        & Max Iterations, Max Attempts, Decay Schedule          & 110, 110, Exponential \\
+            \hline
+            GA        & Max Iterations, Max Attempts, Pop Size, Mutation Prob & 100,100,100,0.1       \\
+            \hline
+            MIMIC     & Max Iterations, Max Attempts, Pop Size, Keep \%       & 100,100,200,0.1       \\
+            \hline
+        \end{tabular}
+    \end{center}
     \bibliography{assignment2}
     \bibliographystyle{plain}
 \end{document}
