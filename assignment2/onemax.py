@@ -2,7 +2,7 @@ import six
 import sys
 
 sys.modules['sklearn.externals.six'] = six
-import mlrose
+import mlrose_hiive as mlrose
 import numpy as np
 import math
 import matplotlib.pyplot as plt

@@ -12,6 +12,9 @@
 \usepackage{graphicx}
 \usepackage[english]{babel}
 \usepackage{lipsum}
+\usepackage{wrapfig}
+\usepackage[font=small,labelfont=bf]{caption}
+
 \fancypagestyle{firstpage}
 {
 \fancyhead[L]{}
@@ -126,21 +129,34 @@
     \end{center}
     As you can see, MIMIC converged to the correct optimal value within 10 iterations of the function making it a very
     powerful algorithm for this particular problem type.
-    \begin{figure}
-        \begin{minipage}{0.5\textwidth}
+    \begin{wrapfigure}{r}{0.8\textwidth}
+        \begin{minipage}{0.4\textwidth}
             \centering
             \includegraphics[width=.9\linewidth]{onemax1.png}
             \caption{One Max Iterations vs Function Value}\label{Fig:One Max Iterations vs Function Value}
         \end{minipage}\hfill
-        \begin{minipage}{0.5\textwidth}
+        \begin{minipage}{0.4\textwidth}
             \centering
             \includegraphics[width=.9\linewidth]{onemax2.png}
             \caption{One Max Iterations vs Time}\label{Fig:One Max Iterations vs Time}
         \end{minipage}
-    \end{figure}
-
-    Figures 1 and 2 illustrate how quickly MIMIC converged and that it took less wall clock time to do so than Genetic Algorithms
+    \end{wrapfigure}
+    \begin{wrapfigure}{c}{0.8\textwidth}
+        \begin{center}
+            \includegraphics[width=1\linewidth]{onemaxinput.png}
+            \caption{One Max Input Size vs Fitness Curve}\label{Fig:One Max Input Size vs Fitness Curve}
+        \end{center}
+    \end{wrapfigure}
+    \begin{wrapfigure}{l}{0.4\textwidth}
+        \begin{center}
+            \includegraphics[width=1\linewidth]{onemaxmimic.png}
+            \caption{One Max MIMIC PopSize vs Fitness Curve}\label{Fig:One Max MIMIC PopSize vs Fitness Curve}
+        \end{center}
+    \end{wrapfigure}
+    Figures~\ref{Fig:One Max Iterations vs Function Value} and~\ref{Fig:One Max Iterations vs Time} illustrate how quickly MIMIC converged and that it took less wall clock time to do so than Genetic Algorithms
     (a similar class of algorithm.)
+    As well as figure~\ref{Fig:One Max Input Size vs Fitness Curve}~shows us that comparatively MIMIC converges quickly
+    with respect to input size.
     This result is most likely due to the fact that while MIMIC requires time to calculate probability density functions,
     by using this to improve its guess each time it saw the most dramatic improvement between iterations.
     By contrast Simulated Annealing took over 175 iterations to converge to the the correct value.
@@ -166,18 +182,24 @@
     an $n x n$ board like in chess where $n$ queens need to be placed such that a minimum number of queens could "attack"
     each other (diagonally, horizontally, or vertically.) So the space to search is a collection of vectors of 8 elements
     where each element is an integer between 0 and 7 and represents where the queen is on that column of the chess board.
-    \begin{figure}
-        \begin{minipage}{0.5\textwidth}
+    \begin{wrapfigure}{c}{0.8\textwidth}
+        \begin{minipage}{0.4\textwidth}
             \centering
             \includegraphics[width=0.9\linewidth]{eightqueens1.png}
             \caption{Eight Queens Iterations vs Fitness Function Value}\label{Fig:Eight Queens Iterations vs Fitness Function Value}
         \end{minipage}\hfill
-        \begin{minipage}{0.5\textwidth}
+        \begin{minipage}{0.4\textwidth}
             \centering
             \includegraphics[width=0.9\linewidth]{eightqueens2.png}
             \caption{Eight Queens Iterations vs Time}\label{Fig:Eight Queens Iterations vs Time}
         \end{minipage}
-    \end{figure}
+    \end{wrapfigure}
+    \begin{wrapfigure}{c}{0.4\textwidth}
+        \begin{center}
+            \includegraphics[width=1\linewidth]{eightqueensdecay.png}
+            \caption{8-Queens SA DecaySchedule vs Fitness Curve}\label{Fig:8-Queens SA DecaySchedule vs Fitness Curve}
+        \end{center}
+    \end{wrapfigure}
     As illustrated below, this optimization problem favors the simulated annealing algorithm implementation approach I have chosen
     in terms of function iteration count required to achieve an optimal placement.
     The best values found for each algorithm were as follows:
@@ -237,18 +259,24 @@
         \end{tabular}
     \end{center}
 
-    \begin{figure}
-        \begin{minipage}{0.5\textwidth}
+    \begin{wrapfigure}{c}{0.8\textwidth}
+        \begin{minipage}{0.4\textwidth}
             \centering
             \includegraphics[width=0.9\linewidth]{tsp1.png}
             \caption{TSP Iterations vs Fitness Function Value}\label{Fig:TSP Iterations vs Fitness Function Value}
         \end{minipage}\hfill
-        \begin{minipage}{0.5\textwidth}
+        \begin{minipage}{0.4\textwidth}
             \centering
             \includegraphics[width=0.9\linewidth]{tsp2.png}
             \caption{TSP Iterations vs Time}\label{Fig:TSP Iterations vs Time}
         \end{minipage}
-    \end{figure}
+    \end{wrapfigure}
+    \begin{wrapfigure}{c}{0.4\textwidth}
+        \begin{center}
+            \includegraphics[width=1\linewidth]{tspmutprob.png}
+            \caption{TSP GA MutationProb vs Fitness Curve}\label{Fig:TSP GA MutationProb vs Fitness Curve}
+        \end{center}
+    \end{wrapfigure}
     As you can see, the best all around algorithm in terms of speed and iteration count is Genetic Algorithms.
     While Simulated Annealing was faster in terms of wall clock time, Genetic algorithms got to the convergence value in
     a much shorter ($> 80$) number of iterations.
@@ -281,24 +309,75 @@
     The best overall accuracy achieved was 75.14\% in total and that is what I targeted as an optimal value for the RO algorithms.
     I supplied the best overall hyperparameters from the previous assignment as arguments to mlrose's function for NN weight optimization
     to allow for a more direct comparison of results.
-    Below is a table of the optimally tuned
+    Below is a table of the optimally tuned RO algorithms and their loss function values after training.
 
     \begin{center}
-        \begin{tabular}{| c | c | c |}
+        \begin{tabular}{| c | c | c | c |}
             \hline
-            Algorithm & Parameters                                            & Value                 \\
+            Algorithm & Train/Test Accuracy & Loss Function Value & Param Values                 \\
             \hline
             \hline
-            RHC       & Max Iterations, Max Attempts, Restarts                & 40, 40, 0             \\
+            RHC       & 65.92\%/65.90\%     & 1.096               & Restarts=0                   \\
             \hline
-            SA        & Max Iterations, Max Attempts, Decay Schedule          & 110, 110, Exponential \\
+            SA        & 65.90\%/65.90\%     & 1.096               & Schedule=ExpDecay            \\
             \hline
-            GA        & Max Iterations, Max Attempts, Pop Size, Mutation Prob & 100,100,100,0.1       \\
-            \hline
-            MIMIC     & Max Iterations, Max Attempts, Pop Size, Keep \%       & 100,100,200,0.1       \\
+            GA        & 76.10\%/75.65\%     & 8.157               & PopSize=100 MutationProb=0.1 \\
             \hline
         \end{tabular}
     \end{center}
+    Let's now look at the fitness curve and timing curve for these algorithms:
+    As you can see from the fitness function curve, none of the three algorithms even change value during the optimization
+    of the weights, suggesting that the initial guess remains the same for the entire training period.
+    I did an experiment where I extend the max iterations out far beyond the graph's iteration count an there was no improvement.
+    Disappointingly this makes it difficult to compare the performance of the various algorithms given that their values
+    remained static regardless of parameter tuning.
+    The only interesting thing to note was the amount of time Genetic Algorithms took relative to RHC and SA.
+    It was significantly longer and increased linearly with iteration count whereas RHC and SA were more or less $O(c)$ in performance.
+    This would seem to imply that each algorithm can do no better in terms of minimizing the loss function than its initial guess.
+    The algorithm that did the best in terms of accuracy despite the fitness curve implying that it was entirely up to the first
+    guess was Genetic Algorithms.
+    It had a better overall accuracy on both training and testing sets than backpropagation despite having the highest value
+    for a loss function.
+    \begin{figure}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.9\linewidth]{nn1.png}
+            \caption{NN Optimization Iterations vs Fitness Function Value}\label{Fig:NN Optimization Iterations vs Fitness Function Value}
+        \end{minipage}\hfill
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.9\linewidth]{nn2.png}
+            \caption{NN Optimization Iterations vs Time}\label{Fig:NN Optimization Iterations vs Time}
+        \end{minipage}
+    \end{figure}
+    After adjusting the learning rate to $1 x 10^{-5}$ and changing the \texttt{clip\_max} to 1, this still had no effect on the
+    loss function and overall accuracy of the neural network.
+    While it is near impossible to tell from the graphs, a closer look at the weights themselves shows small ($< 0.001$)
+    changes in the fitness values for each function.
+    RHC and SA while doing worse in terms of accuracy actually have a smaller loss function value, and therefore would likely
+    generalize better over the unseen new data.
+    GA while having a greater accuracy did so by training the network weights such that it always produced the guess for
+    any new sample.
+    Since the data is skewed (almost 75\% of one label) this guess ended up being more correct but would generalize worse
+    as indicated by a worse overall loss function value.
+    To improve this result I would need to further address/tune some of the following:
+    \begin{itemize}
+        \item Different activation functions
+        \item Adjusting the learning rate
+        \item Further adjusting hyper parameters of each RO algorithm
+    \end{itemize}
+    Below is a plot where I varied the Activation Functions for all of the RO algorithms during weight training.
+    This shows for RHC and SA that the activation functions produced the same value for all iterations (despite being different.)
+    This also shows for Genetic Algorithms that the Identity function reduced the loss function the most dramatically, while
+    all of them improved.
+    Genetic algorithms performed the best in terms of learning, and overall accuracy, but not in terms of time to train.
+    \begin{figure}
+        \begin{center}
+            \includegraphics[width=1\linewidth]{nnactfunc.png}
+            \caption{NN Activation Function vs Fitness Curve}\label{Fig:NN Activation Function vs Fitness Curve}
+        \end{center}
+    \end{figure}
+    \pagebreak
     \bibliography{assignment2}
     \bibliographystyle{plain}
 \end{document}
