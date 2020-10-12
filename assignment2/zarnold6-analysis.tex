@@ -293,8 +293,8 @@
 
 
     \section{Neural Network Weight Optimization}
-    In this section I will be applying the algorithms (with the exception of MIMIC) from above on my original assignment 1 dataset 1 (Classifying whether
-    or not someone makes less than \textdollar50k in a year in America) and attempt to optimize a Neural Network's weights.
+    In this section I will be applying the algorithms (with the exception of MIMIC) from above on my original assignment 1 dataset 2 (Classifying whether
+    or not someone responds to a marketing campaign for a bank) and attempt to optimize a Neural Network's weights.
     The goal is to replace backpropagation as the method of NN training with RO\@.
     As was the case with the initial training I will be doing the following:
     \begin{itemize}
@@ -306,22 +306,22 @@
     This was due to the networks hidden layer construction and the fact that this problem did not lend itself well to any
     of the activation functions supplied to backpropagation as well as the fact that relative to the other learners, the
     best NN was subject to high bias given its underfitting.
-    The best overall accuracy achieved was 75.14\% in total and that is what I targeted as an optimal value for the RO algorithms.
+    The best overall accuracy achieved was 91\% in total and that is what I targeted as an optimal value for the RO algorithms.
     I supplied the best overall hyperparameters from the previous assignment as arguments to mlrose's function for NN weight optimization
     to allow for a more direct comparison of results.
     Below is a table of the optimally tuned RO algorithms and their loss function values after training.
 
     \begin{center}
-        \begin{tabular}{| c | c | c | c |}
+        \begin{tabular}{| c | c | c | c | c |}
             \hline
-            Algorithm & Train/Test Accuracy & Loss Function Value & Param Values                 \\
+            Algorithm & Train/Test Accuracy & Loss Function Value & Param Values & Activation Function                 \\
             \hline
             \hline
-            RHC       & 65.92\%/65.90\%     & 1.096               & Restarts=0                   \\
+            RHC       & 56.12\%/56.18\%      & 2.164              & Restarts=0   &        Rectified Linear Unit          \\
             \hline
-            SA        & 65.90\%/65.90\%     & 1.096               & Schedule=ExpDecay            \\
+            SA        & 56.12\%/56.18\%     & 2.164               & Schedule=ExpDecay &    Rectified Linear Unit       \\
             \hline
-            GA        & 76.10\%/75.65\%     & 8.157               & PopSize=100 MutationProb=0.1 \\
+            GA        & 88.73\%/88.73\%     & 0.316               & PopSize=100 MutationProb=0.1 & Sigmoid\\
             \hline
         \end{tabular}
     \end{center}
@@ -336,7 +336,7 @@
     This would seem to imply that each algorithm can do no better in terms of minimizing the loss function than its initial guess.
     The algorithm that did the best in terms of accuracy despite the fitness curve implying that it was entirely up to the first
     guess was Genetic Algorithms.
-    It had a better overall accuracy on both training and testing sets than backpropagation despite having the highest value
+    It had a better overall accuracy on both training and testing sets than backpropagation and had the lowest value
     for a loss function.
     \begin{figure}
         \begin{minipage}{0.5\textwidth}
@@ -358,8 +358,7 @@
     generalize better over the unseen new data.
     GA while having a greater accuracy did so by training the network weights such that it always produced the guess for
     any new sample.
-    Since the data is skewed (almost 75\% of one label) this guess ended up being more correct but would generalize worse
-    as indicated by a worse overall loss function value.
+    Since the data is skewed (almost 75\% of one label) this guess ended up being more correct and might not generalize well.
     To improve this result I would need to further address/tune some of the following:
     \begin{itemize}
         \item Different activation functions
@@ -377,6 +376,7 @@
             \caption{NN Activation Function vs Fitness Curve}\label{Fig:NN Activation Function vs Fitness Curve}
         \end{center}
     \end{figure}
+    By using the sigmoid activation function I was able to achieve a slightly higher accuracy than random guessing.
     \pagebreak
     \bibliography{assignment2}
     \bibliographystyle{plain}
