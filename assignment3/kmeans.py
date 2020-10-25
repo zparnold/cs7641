@@ -6,23 +6,34 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
 import pandas as pd
+from sklearn import metrics
 print(__doc__)
 
 # Generating the sample data from make_blobs
 # This particular setting has one distinct cluster and 3 clusters placed close
 # together.
 # Generate synthetic dataset with 8 random clusters
-df = pd.read_csv('./bank-additional.csv', delimiter=';')
+features = ['age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status', 'occupation',
+                           'relationship', 'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week',
+                           'native-country', '<=50k']
+df = pd.read_csv('./adult-small.data',
+                  names=features)
 df.dropna()
 df.drop_duplicates()
-X = pd.get_dummies(df, columns=['job','marital','education','default','housing','loan','contact','month','day_of_week','poutcome'])
-X.dropna()
-X['y'].value_counts()
-X['y'] = X['y'].map({'yes':1, 'no': 0})
-y = X['y']
-X = X.drop(['y'], axis=1)
+df = df[df['workclass'] != '?']
+df = df[df['occupation'] != '?']
+df = df[df['education'] != '?']
+df = df[df['marital-status'] != '?']
+df = df[df['relationship'] != '?']
+df = df[df['race'] != '?']
+df = df[df['sex'] != '?']
+df = df[df['native-country'] != '?']
+X = pd.get_dummies(df, columns=['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country'])
+X['<=50k'] = X['<=50k'].map({'<=50K':1, '>50K': 0})
+y = X['<=50k']
+X = X.drop(['<=50k'], axis=1)
 
-range_n_clusters = [3]
+range_n_clusters = [4]
 
 for n_clusters in range_n_clusters:
     # Create a subplot with 1 row and 2 columns
@@ -51,6 +62,9 @@ for n_clusters in range_n_clusters:
 
     # Compute the silhouette scores for each sample
     sample_silhouette_values = silhouette_samples(X, cluster_labels)
+    print('NMI: {}'.format(metrics.normalized_mutual_info_score(y, cluster_labels)))
+    print('Homogeneity: {}'.format(metrics.homogeneity_score(y, cluster_labels)))
+    print('Completeness: {}'.format(metrics.completeness_score(y, cluster_labels)))
 
     y_lower = 10
     for i in range(n_clusters):

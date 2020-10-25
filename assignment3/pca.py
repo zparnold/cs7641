@@ -20,7 +20,7 @@ df = df[df['native-country'] != '?']
 ds1_dummies = pd.get_dummies(df, columns=['workclass','education','marital-status','occupation','relationship','race','sex','native-country'])
 ds1_dummies['<=50k'] = ds1_dummies['<=50k'].map({'<=50K':1, '>50K': 0})
 
-n_components = 4
+n_components = 2
 
 pca = PCA(n_components=n_components)
 components = pca.fit_transform(ds1_dummies)
@@ -64,7 +64,7 @@ X['<=50k'] = X['<=50k'].map({'<=50K':1, '>50K': 0})
 y = X['<=50k']
 X = X.drop(['<=50k'], axis=1)
 
-target_names = ["<=50k", ">50k"]
+target_names = [">50k","<=50k"]
 
 pca = PCA(n_components=2)
 X_r = pca.fit(X).transform(X)

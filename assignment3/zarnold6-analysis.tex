@@ -1,0 +1,72 @@
+%! Author = zarnold
+%! Date = 9/27/20
+
+% Preamble
+\documentclass[10pt]{article}
+\usepackage[letterpaper]{geometry}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{fancyhdr}
+% Packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{lipsum}
+\usepackage{wrapfig}
+\usepackage[font=small,labelfont=bf]{caption}
+
+\fancypagestyle{firstpage}
+{
+\fancyhead[L]{}
+\fancyhead[R]{Zach Arnold \linebreak CS 7641 \linebreak Assignment 3}
+\setlength{\headheight}{52pt}
+}
+\graphicspath{./}
+\newcommand{\datasetone}{Census data to predict salary band}
+\newcommand{\datasettwo}{Banking data to predict response}
+% Document
+\begin{document}
+    \thispagestyle{firstpage}
+
+    \section{Introduction}\label{sec:introduction}
+    This paper will explore several unsupervised learning and dimensionality reduction techniques on the datasets I've
+    used for earlier assignments.
+    It begins with a discussion of the datasets, continues with exploration of clustering, then analyzes various dimensionality
+    reduction techniques on neural network performance and finally ends with a combination of clustering and dimensionality
+    reduction as it pertains to NN performance.
+    Unless otherwise stated, scikit-learn's libraries were used to generate models, results, and graphs.
+
+
+    \section{Discussion of Datasets}\label{sec:discussion-of-datasets}
+
+    \subsection{Dataset 1 \datasetone}\label{subsec:dataset-1datasetone}
+    According to the dataset description\cite{Dua:2019} it contains features which attempt to classify a binary label which is whether or not the sample "makes more than \$50k USD" per year.
+    This dataset is interesting due to its size ($>$ 40k rows) which allowed me to cover a significant portion of the space made up of the various attributes.
+    There are 14 attributes in this dataset, 7 continuous valued attributes and 7 categorical attributes.
+    In regards to data distribution with respect to the target attribute, there are approximately 3x as many samples in the category of "less than 50k per year" than in the other category.
+    Given the high number of features it seems ripe for dimensionality reduction, especially because some features seem like they would not be correlated with an outcome (like feature "maritial status")
+
+    \subsection{Dataset 2 \datasettwo}\label{subsec:dataset-2datasettwo}
+    According to the dataset description this comes from the marketing campaign of a Portuguese bank in the 1990s.\cite{Dua:2019}
+    They were intending to sell their customers on a product called "bank term deposit".
+    The attributes describe various aspects of each customer including details such as age and employment, as well as that customers financial history with the institution and some other details like previous marketing campaign results and economic indicators such as the euribor 3 month note daily rate and consumer price index.
+    This is also a classification problem with the outcome being measured as whether or not they eventually purchased the product in question (binary classification.)
+    Given the high number of features it seems ripe for dimensionality reduction, especially because some features seem like they would not be correlated with an outcome (like feature "euribor3m")
+    There is an even split between categorical features (10/20) and continuous ones (10/20) in this dataset.
+    There are approximately 7x more examples of someone not signing up for this product (as indicated by the "y" value) than those that do.
+
+
+    \section{Clustering Discussion}\label{sec:clustering-discussion}
+    \input{clustering-discussion}
+
+    \section{Dimensionality Reduction Discussion}\label{sec:dimensionality-reduction-discussion}
+
+    \input{dimensionality-reduction.tex}
+    
+    \section{NN Learning on Dimensionally Reduced Datasets}
+    \section{NN Learning on Clustered, Dimensionally Reduced Datasets}
+
+
+    \bibliography{assignment3}
+    \bibliographystyle{plain}
+\end{document}
