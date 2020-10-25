@@ -312,16 +312,16 @@
     Below is a table of the optimally tuned RO algorithms and their loss function values after training.
 
     \begin{center}
-        \begin{tabular}{| c | c | c | c | c |}
+        \begin{tabular}{| l | l | l | l | l |}
             \hline
-            Algorithm & Train/Test Accuracy & Loss Function Value & Param Values & Activation Function                 \\
+            Algorithm & Train/Test Accuracy & Loss Function Value & Param Values                 & Activation Function   \\
             \hline
             \hline
-            RHC       & 56.12\%/56.18\%      & 2.164              & Restarts=0   &        Rectified Linear Unit          \\
+            RHC       & 56.12\%/56.18\%     & 2.164               & Restarts=0                   & ReLU \\
             \hline
-            SA        & 56.12\%/56.18\%     & 2.164               & Schedule=ExpDecay &    Rectified Linear Unit       \\
+            SA        & 56.12\%/56.18\%     & 2.164               & Schedule=ExpDecay            & ReLU \\
             \hline
-            GA        & 88.73\%/88.73\%     & 0.316               & PopSize=100 MutationProb=0.1 & Sigmoid\\
+            GA        & 88.73\%/88.73\%     & 0.316               & PopSize=100 MutationProb=0.1 & Sigmoid               \\
             \hline
         \end{tabular}
     \end{center}
