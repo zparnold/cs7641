@@ -8,4 +8,9 @@ scimitar-yb developers.
 Dheeru Dua and Casey Graff.
 \newblock {UCI} machine learning repository, 2017.
 
+\bibitem{klein_2019}
+Carsten Klein.
+\newblock Separating mixed signals with independent component analysis, May
+  2019.
+
 \end{thebibliography}
