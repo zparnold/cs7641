@@ -74,7 +74,7 @@ dataset so that clusters are more hyper-spherical and separated from each other 
     \end{minipage}
 \end{figure}
 For expectation maximization, I used the scikit-learn Gaussian mixture model function.
-Based on my exploration I do not believe that the data are distributed in a hyper-spherical format, therefore a GMM would
+Based on my exploration, I do not believe that the data are distributed in a hyper-spherical format, therefore a GMM would
 be able to better group samples based on its ability to accommodate non-spherical hyper-surfaces.
 In order to select a best value for the number of estimators in the model, I plotted the Bayesian Information Criterion
 vs the Akaike Information Criterion, where they begin to diverge is likely the best place to stop in terms of n\_estimators.

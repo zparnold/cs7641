@@ -1,6 +1,8 @@
 In this section I explore four methods of dimensionality reduction on both of my datasets.
 
 \subsection{Principal Components Analysis}\label{subsec:principal-components-analysis}
+For principal component analysis I chose to vary the number of components to explain variance, and collected their resulting eigenvalues to better understand this DR technique.
+Below is a table of results for both data sets.
 \begin{center}
     \begin{tabular}{|c| c |c|}
         \hline
@@ -17,6 +19,7 @@ Two features explain 100\% of the variance in the data in the case of PCA for di
 99.9\% of the variance in the case of the second dataset.
 In the case of dataset one the eigenvalues are very large which would seem to imply that the data are close together and
 the are being multiplied by a large number to separate.
+By contrast, data set two seems to have more components needed to explain the variance and each of those as a slightly smaller eigenvalue.
 Figures~\ref{Fig:PCA DS1} and~\ref{Fig:PCA DS2} show the projection of the transformed data according to their principal
 components for the first two features (to allow for plotting).
 \begin{figure}
@@ -33,12 +36,12 @@ components for the first two features (to allow for plotting).
 \end{figure}
 
 \subsection{Independent Components Analysis}\label{subsec:independent-components-analysis}
-Similar to the previous I also attempted to search for the best number of components for each dataset.
+Similar to the previous I also attempted to search for the best number of independent "source components" for each dataset.
 According to Carsten Klein\cite{klein_2019}
 "An interesting thing about two independent, non-Gaussian signals is that their sum is more Gaussian than any of the source signals.
 Therefore we need to optimize W in a way that the resulting signals of Wx are as non-Gaussian as possible."
 In other words, using a measurement like Kurtosis we can compare the "Gaussianity" of different ICA runs.
-Since the normal distribution (Gaussian) has a kurtosis of 3, we are searching for ICA components with kurtosis of < 3.
+Since the normal distribution (Gaussian) has a kurtosis of 3, we are searching for ICA components with kurtosis of $<$ 3.
 In order to reduce the covariance of the feature vectors as much as possible (to in effect ensure they were independent
 components, I elected to whiten the feature space before processing.)
 Below is a table depicting the n-components selected for each dataset and the resulting Kurtosis.
@@ -109,7 +112,7 @@ For my final dimensionality reduction technique, I chose to use linear discrimin
 Due to the fact that each of my problems are binary classification, and while not linearly seperable (otherwise accuracy would be better,)
 a linear decision boundary with Bayesian conditional density would allow me to reduce the dimensionality of the dataset similar
 to PCA in the direction of the largest discriminant.
-However the difference here is the introduction of apriori information in the form of class labels.
+However the difference here is the introduction of a priori information in the form of class labels.
 The number of components had to be $min(num\_features, unique\_labels - 1)$ which in my case was $1$ for both datasets given
 that they were both binary classification problems.
 Since LDA takes into account class labels I chose (similar to classifiers) to split the data between a test/training set (25/75\% respectively.)

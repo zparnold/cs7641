@@ -114,14 +114,17 @@
     similar clusters, and in certain cases clusters which are more homogeneous and complete than the original, implying
     that DR was a net positive.
     \begin{figure}
-        \centering
-        \includegraphics[width=.9\linewidth]{ds1_kmeans_rp.png}
-        \caption{DS1 Kmeans RP}\label{Fig:DS1 Kmeans RP}
-    \end{figure}
-    \begin{figure}
-        \centering
-        \includegraphics[width=.9\linewidth]{ds2_kmeans_rp.png}
-        \caption{DS2 Kmeans RP}\label{Fig:DS2 Kmeans RP}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{ds1_kmeans_rp.png}
+            \caption{DS1 Kmeans RP}\label{Fig:DS1 Kmeans RP}
+        \end{minipage}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{ds2_kmeans_rp.png}
+            \caption{DS2 Kmeans RP}\label{Fig:DS2 Kmeans RP}
+        \end{minipage}
+
     \end{figure}
     Specifically let's look at~\ref{Fig:DS1 Kmeans RP} and~\ref{Fig:DS2 Kmeans RP} and understand a bit deeper how datasets 1 and 2 compared for Kmeans and randomized projections.
     I chose these (there are many more pictures in the repo) specifically because they showed the largest separation between
@@ -130,22 +133,45 @@
     for the first and second feature.
     The clusters appear to be (despite not having clear shapes) to be well formed.
 
+
     \section{NN Learning on Clustered Datasets}\label{sec:nn-learning-on-clustered-datasets}
     Taking the DR discussion further I also used LDA to construct an \texttt{MLPClassifier} from dimensionally reduced data.
-
+    The choice to use LDA was primarily based on its performance in the "completeness" metric during clustering comparison.
+    Additionally I needed to make the results repeatable which would rule out RP.
+    I chose to focus on dataset 2 given that classifiers have better performance on it and therefore DR would have to improve
+    upon the result to be considered effective.
+    I chose (initially and then tuned) the same parameters as assignment 1 for dataset 2 as hyperparameters for an initial
+    comparison.
+    In figure~\ref{Fig:NN Learning Curves on DR Data} you can see the learning and validation curves for this training run.
     \begin{figure}
         \centering
         \includegraphics[width=.9\linewidth]{ann1.png}
         \caption{NN Learning Curves on DR Data}\label{Fig:NN Learning Curves on DR Data}
     \end{figure}
+    Compared with the original neural network in assignment one for data set two, there appears to be a 2\% increase in accuracy overall for both training and testing sets.
+    Additionally, it appears that the cross validation score is very close to the training score and has more samples are produced the standard deviation grows tighter around the data.
+    The scalability of the model appears to grow logarithmically with the number of samples, and it seems that the best score is achieved right away in terms of wall clock time.
+    In terms of training time, and overall performance, dimensionality reduction has improved the performance of the neural network for this data set.
 
 
     \section{NN Learning on Clustered, Dimensionally Reduced Datasets}\label{sec:nn-learning-on-clustered,-dimensionally-reduced-datasets}
+    In this final section, I explore the relationship that adding an additional attribute which is the output of the clustering to the dimensionally reduced data set on performance of the neural network.
+    In theory, despite increasing the dimension by one, this should either improve accuracy or lower fit time due to the fact that we are adding some a priori information to the neural network classifier.
+    Figure~\ref{Fig:NN Learning Curves on DR Clustered Data} shows the results of the training.
     \begin{figure}
         \centering
-        \includegraphics[width=.9\linewidth]{ann1.png}
-        \caption{NN Learning Curves on DR, Clustered Data}\label{Fig:NN Learning Curves on DR, Clustered Data}
+        \includegraphics[width=.9\linewidth]{ann2.png}
+        \caption{NN Learning Curves on DR, Clustered Data}\label{Fig:NN Learning Curves on DR Clustered Data}
     \end{figure}
+    Compared with the previous training run, the only difference to note is that the training and cross validation scores are closer together and the standard deviation of these results are slightly closer.
+    However, the scalability and performance of the model as a function of training samples or wall clock time appears to be very similar to the previous training run.
+    Similar to the last neural network, this neural network has a 2\% performance increase over assignment ones result in terms of accuracy score.
+    We might possibly improve this result by using other dimensionality reduction techniques, beyond this in order to further improve our results we would need either more or better data that more completely describes the feature space in terms of binary classification.
+
+
+    \section{Conclusion}\label{sec:conclusion}
+    In this paper, I have investigated clustering, dimensionality reduction, and binary classification of multiple data sets in order to explore the relationships between these techniques and their impact on accuracy and training times of neural networks.
+    The results were a successfully dimensionally reduced data set and improvements on accuracy and training time relative to the original results in assignment one.
 
     \bibliography{assignment3}
     \bibliographystyle{plain}
