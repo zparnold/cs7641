@@ -2,7 +2,7 @@
 %! Date = 9/27/20
 
 % Preamble
-\documentclass[10pt]{article}
+\documentclass[11pt]{article}
 \usepackage[letterpaper]{geometry}
 \usepackage{cite}
 \usepackage{url}
@@ -66,16 +66,86 @@
     \input{dimensionality-reduction.tex}
 
 
-    \section{Clustering on Dimensionally Reduced Datasets}
-    \begin{itemize}
-        \item When you reproduced your clustering experiments on the datasets projected onto the new spaces created by ICA, PCA, and RP, did you get the same clusters as before? Different clusters? Why? Why not?
-        \item When you re-ran your neural network algorithms were there any differences in performance? Speed? Anything at all?
-    \end{itemize}
+    \section{Clustering on Dimensionally Reduced Datasets}\label{sec:clustering-on-dimensionally-reduced-datasets}
+    For this section I performed 16 experiments to compare each of the datasets, clustering algorithm, and dimensionality
+    reduction technique.
+    Below is a table of results for the output metrics I chose to compare.
+    \begin{center}
+        \begin{tabular}{|c| c | c | c |}
+            \hline
+            & Normalized Mutual Information & Homogeneity Score & Completeness Score \\
+            \hline
+            \hline
+            DS1 + KMEANS + PCA & 0.001                         & 0.002             & 0.001              \\
+            \hline
+            DS1 + KMEANS + ICA & 0.009                         & 0.126             & 0.001              \\
+            \hline
+            DS1 + KMEANS + RP  & 0.001                         & 0.001             & 0.001              \\
+            \hline
+            DS1 + KMEANS + LDA & 0.230                         & 0.370             & 0.167              \\
+            \hline
+            DS1 + GMM + PCA    & 0.075                         & 0.072             & 0.079              \\
+            \hline
+            DS1 + GMM + ICA    & 0.093                         & 0.075             & 0.120              \\
+            \hline
+            DS1 + GMM + RP     & 0.053                         & 0.073             & 0.042              \\
+            \hline
+            DS1 + GMM + LDA    & 0.238                         & 0.366             & 0.177              \\
+            \hline
+            DS2 + KMEANS + PCA & 0.189                         & 0.236             & 0.158              \\
+            \hline
+            DS2 + KMEANS + ICA & 0.096                         & 0.153             & 0.070              \\
+            \hline
+            DS2 + KMEANS + RP  & 0.070                         & 0.106             & 0.053              \\
+            \hline
+            DS2 + KMEANS + LDA & 0.260                         & 0.413             & 0.190              \\
+            \hline
+            DS2 + GMM + PCA    & 0.236                         & 0.346             & 0.179              \\
+            \hline
+            DS2 + GMM + ICA    & 0.096                         & 0.153             & 0.070              \\
+            \hline
+            DS2 + GMM + RP     & 0.234                         & 0.345             & 0.178              \\
+            \hline
+            DS2 + GMM + LDA    & 0.259                         & 0.421             & 0.187              \\
+            \hline
+        \end{tabular}
+    \end{center}
+    Comparing these values you can see that for a reasonable tolerance (relative to each output metric) we have roughly
+    similar clusters, and in certain cases clusters which are more homogeneous and complete than the original, implying
+    that DR was a net positive.
+    \begin{figure}
+        \centering
+        \includegraphics[width=.9\linewidth]{ds1_kmeans_rp.png}
+        \caption{DS1 Kmeans RP}\label{Fig:DS1 Kmeans RP}
+    \end{figure}
+    \begin{figure}
+        \centering
+        \includegraphics[width=.9\linewidth]{ds2_kmeans_rp.png}
+        \caption{DS2 Kmeans RP}\label{Fig:DS2 Kmeans RP}
+    \end{figure}
+    Specifically let's look at~\ref{Fig:DS1 Kmeans RP} and~\ref{Fig:DS2 Kmeans RP} and understand a bit deeper how datasets 1 and 2 compared for Kmeans and randomized projections.
+    I chose these (there are many more pictures in the repo) specifically because they showed the largest separation between
+    clusters and because it demonstrates just how good a random projection can be.
+    Look at the separation at the sillohette coeff (red dotted line) for each one, and then look at the cluster labeling
+    for the first and second feature.
+    The clusters appear to be (despite not having clear shapes) to be well formed.
 
-    \section{NN Learning on Clustered Datasets}
+    \section{NN Learning on Clustered Datasets}\label{sec:nn-learning-on-clustered-datasets}
+    Taking the DR discussion further I also used LDA to construct an \texttt{MLPClassifier} from dimensionally reduced data.
 
-    \section{NN Learning on Clustered, Dimensionally Reduced Datasets}
+    \begin{figure}
+        \centering
+        \includegraphics[width=.9\linewidth]{ann1.png}
+        \caption{NN Learning Curves on DR Data}\label{Fig:NN Learning Curves on DR Data}
+    \end{figure}
 
+
+    \section{NN Learning on Clustered, Dimensionally Reduced Datasets}\label{sec:nn-learning-on-clustered,-dimensionally-reduced-datasets}
+    \begin{figure}
+        \centering
+        \includegraphics[width=.9\linewidth]{ann1.png}
+        \caption{NN Learning Curves on DR, Clustered Data}\label{Fig:NN Learning Curves on DR, Clustered Data}
+    \end{figure}
 
     \bibliography{assignment3}
     \bibliographystyle{plain}

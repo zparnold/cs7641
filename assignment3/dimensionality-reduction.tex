@@ -42,10 +42,6 @@ Since the normal distribution (Gaussian) has a kurtosis of 3, we are searching f
 In order to reduce the covariance of the feature vectors as much as possible (to in effect ensure they were independent
 components, I elected to whiten the feature space before processing.)
 Below is a table depicting the n-components selected for each dataset and the resulting Kurtosis.
-\begin{itemize}
-    \item For ICA, how kurtotic are the distributions?
-    \item Do the projection axes for ICA seem to capture anything "meaningful"?
-\end{itemize}
 \begin{figure}
     \begin{minipage}{0.5\textwidth}
         \centering
@@ -58,14 +54,32 @@ Below is a table depicting the n-components selected for each dataset and the re
         \caption{ICA Kurtosis vs RCError DS2}\label{Fig:ICA DS2}
     \end{minipage}
 \end{figure}
+Looking at figures~\ref{Fig:ICA DS1} and~\ref{Fig:ICA DS2} we can see the relationship between the number of components (the dimensions reduced to)
+and both Kurtosis and Reconstruction Error (as measured by mean squared error).
+Similar to PCA, for small values of n\_components reconstruction error quickly approaches zero where the kurtosis gradually
+rises for each additional component.
+This would seem to suggest that for $n=2$ (Dataset 1) and $n=4$ (Dataset 2) we reach the optimal tradeoff between treating
+each source attribute "as a seperate mixed signal" and reducing RC error (the obvious bias in DR being that we want n to be as
+small as possible.)
+With respect to each dataset the meaningfulness of this result is that it is possible to reconstruct the distribution with
+significantly less data than the many more attributes which generated the original.
+
 
 \subsection{Randomized Projection}\label{subsec:randomized-projection}
-\begin{itemize}
-
-    \item Assuming you only generate k projections (i.e., you do dimensionality reduction), how well is the data reconstructed by the randomized projections? PCA?
-    \item How much variation did you get when you re-ran your RP several times (I know I don't have to mention that you might want to run RP many times to see what happens, but I hope you forgive me)?
-\end{itemize}
-\begin{center}
+Randomized projections allowed me to generate random dimensionality reduction transformations from the data.
+I chose to repeat this process 10 times for each dataset and to utilize a Gaussian Randomized projection such that each
+feature was itself equally likely to be a part of the final dimensionally reduced output.
+Along with repeating each experiment I chose to vary the number of components as I did in other experiments to search
+for an optimal reconstruction error.
+Perhaps unsurprisingly looking at figures~\ref{Fig:RP DS1} and~\ref{Fig:RP DS2} we can see that for larger values of
+\texttt{n\_components} the reconstruction error was lower.
+The oscillations in the graph can be explained by the fact that the random projections can increase or decrease the RCError
+by small amounts.
+There was a significant amount of variance between runs as shown in the table~\ref{RP Var}.
+Dataset 1 had much more variance than dataset 2 during randomized projection runs.
+This is most likely due to the 30+ additional features in the space for which a random selection/transformation needed
+to be made.
+\begin{center}\label{RP Var}
     \begin{tabular}{|c| c |c|}
         \hline
         & Variance               & Standard Deviation \\
@@ -91,6 +105,15 @@ Below is a table depicting the n-components selected for each dataset and the re
 \end{figure}
 
 \subsection{Linear Discriminant Analysis}\label{subsec:linear-discriminant-analysis}
+For my final dimensionality reduction technique, I chose to use linear discriminant analysis.
+Due to the fact that each of my problems are binary classification, and while not linearly seperable (otherwise accuracy would be better,)
+a linear decision boundary with Bayesian conditional density would allow me to reduce the dimensionality of the dataset similar
+to PCA in the direction of the largest discriminant.
+However the difference here is the introduction of apriori information in the form of class labels.
+The number of components had to be $min(num\_features, unique\_labels - 1)$ which in my case was $1$ for both datasets given
+that they were both binary classification problems.
+Since LDA takes into account class labels I chose (similar to classifiers) to split the data between a test/training set (25/75\% respectively.)
+After the transformation I opted to classify the remainder of instances, below is the result on test data.
 \begin{center}
     \begin{tabular}{|c| c |}
         \hline
@@ -103,3 +126,7 @@ Below is a table depicting the n-components selected for each dataset and the re
         \hline
     \end{tabular}
 \end{center}
+As you can see these results are comparable to the accuracy scores of some of the better trained classifiers from assignment 1.
+This I believe speaks to the power of LDA being able to consider apriori information in constructing the DR projection.
+Unfortunately given that there was only one value for \texttt{n\_components} I cannot compare reconstruction error over time,
+but given the positive results, I don't think that the reconstruction error would be very high.
