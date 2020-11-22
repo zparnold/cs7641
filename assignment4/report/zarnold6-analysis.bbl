@@ -1,5 +1,12 @@
 \begin{thebibliography}{1}
 
+\bibitem{Kaelbling1996}
+Leslie Kaelbling, Michael Littman, and Andrew Moore.
+\newblock Reinforcement learning: A survey.
+\newblock
+  \url{http://www.cs.cmu.edu/afs/cs/project/jair/pub/volume4/kaelbling96a.pdf},
+  1996.
+
 \bibitem{Burlap20}
 James MacGlashan.
 \newblock Burlap.

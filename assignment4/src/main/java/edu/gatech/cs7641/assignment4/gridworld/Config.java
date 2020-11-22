@@ -10,9 +10,9 @@ class Config {
      */
 
     // Main settings
-    static final int NUM_TRIALS = 10;
-    static final String DOMAIN_NAME = Domain.MOUNTAIN_CAR;
-    static final String AGENT_NAME = Agent.VALUE_ITERATION;
+    static final int NUM_TRIALS = 1000;
+    static final String DOMAIN_NAME = Domain.GRID_WORLD_LARGE;
+    static final String AGENT_NAME = Agent.Q_LEARNER;
     static final boolean VISUALIZE = true;
     static final boolean PLOT = true;
     static final boolean Q_LEARN_PLOT = true;

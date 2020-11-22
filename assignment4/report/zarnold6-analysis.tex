@@ -94,7 +94,11 @@
     In this section we will talk about the algorithms I will be using to analyze these problems as well as the parameters
     that I will vary in search of an optimal solution to these problems.
 
-    \subsection{Parameter Exploration}
+    \subsection{Parameter Exploration}\label{subsec:parameter-exploration}
+    In this subsection I will describe the various parameters that I will be using to tune the solution to the problems.
+    Many of these are standard parameters and while I did not perform an exhaustive grid search for each best parameter,
+    randomized selection optimizing for performance in terms of iterations and wall-clock time as well as total average
+    reward was the strategy I employed to arrive at the values described in the analysis section.
     \begin{itemize}
         \item $\gamma$ which is the discount factor where $\gamma \in [0,1]$ and manages the explore/exploit dilemma in RL where high values favor long-term rewards, and low values optimize for greedier short-term rewards
         \item $\delta$ which controls the threshold that if Policy Iteration, Value Iteration, or Q-Learning improve by less than this value, then the algorithm terminates
@@ -120,11 +124,112 @@
 
 
     \section{Analysis}
+    In the section I will compare the performance of the algorithms on the various problems.
+    For the purposes of this paper whenever a "result" was achieved or I declare an algorithm has "converged," that means
+    that either the maximum number of iterations was reached and the result remains, or (more likely) that each algorithm
+    during its update step increased its value, policy, or Q by less than parameter $\delta$.
+    Experiments were performed to determine the appropriate $\delta$ for each problem, but were kept the same for each
+    algorithm running against a problem for comparative ease.
 
     \subsection{\problemone}
-    Results of algorithms:
-    Due to the number of states, everything listed below is the average of 10 repeated trials as opposed to 100 for \problemone.
-    \begin{center}
+    For problem one the results that I gathered are the average of 1,000 trials using the same grid world and parameters.
+    After tuning the various parameters from the subsection on parameter definition, I determined that the following were optimal
+    values for each algorithm: $\gamma = 0.999, \delta = 0.0001, \alpha = 0.2, Q = 0.5$ as described above each algorithm
+    searched in an $\epsilon$-greedy fashion where $\epsilon = 0.1$.
+    Table~\ref{tab:\problemone~Results} contains the results of each algorithm on the \problemone.
+    The Algorithm which converts the fastest in terms of wall clock time was value iteration by a very small margin.
+    All of the algorithms performed roughly similar in terms of wall clock time.
+    This is largely expected due to the fact that the world is small and the results fairly direct to compute.
+    Interestingly Q learning performed for worse in terms of average number of actions to reach a desired goal state.
+    Looking at the policy determined in Figure~\ref{Fig:Small Grid World} from the small grid world even though I placed
+    a large number of blocking squares in the way between the agent and the goal, the policy remained remarkably consistent across runs.
+    In fact comparing reward per trial between policy ration and valuation yielded very similar graphs as seen by figures~\ref{Fig:Policy Iteration~\problemone},~\ref{Fig:Value Iteration~\problemone}.
+    However the value iteration method seem to have a more consistent reward per trial closer to the best possible reward which was 3.0.
+    Despite research shown by Kaelbling et al, Policy Iteration should have outperformed Value Iteration given that we had
+    a very high discount factor $\gamma = 0.99$.\cite{Kaelbling1996}
+    All three algorithms converge to the best and correct answer from my understanding given that they all have the same
+    best reward, and the same best number of steps to complete.
+    Introducing Q-Learning into the mix shows that while it took longer in terms of iterations and actions,
+    it still converged to the same result.
+    Without knowing transition probabilities or rewards Q-Learning was remarkably able to arrive at this in only 1.5x
+    slower in terms of wall clock time than value or policy iteration.
+    Looking at figures~\ref{Fig:Q-Learning DD~\problemone} and~\ref{Fig:Q-Learning~\problemone}, we see that in the
+    beginning of the training that Q learning has many more steps than either policy or value iteration.
+    However after about episode number 120 the average number of steps begins to settle into the range that value and
+    policy iteration have suggesting that Q-Learning has nearly successfully determined the rewards on states at that point
+    during training.
+    Average award for Q learning appears to be quite spiky suggesting that even into trial number 1000 there was still
+    a large amount of variance in terms of the best path through the grid world from the starting stay to the goal state.
+    \begin{table}
+        \centering
+        \begin{tabular}{|c| c | c | c |}
+            \hline
+            & Policy Iteration & Value Iteration & Q-Learning \\
+            \hline
+            \hline
+            Average Number of Actions & 28               & 28              & 102        \\
+            \hline
+            Average Reward            & -4.18049         & -4.07429        & -11.45929  \\
+            \hline
+            Best Number of Actions    & 21               & 21              & 21         \\
+            \hline
+            Best Reward               & -3.00000         & -3.00000        & -3.00000   \\
+            \hline
+            Average Processing Time   & 0.217(s)         & 0.214(s)        & 0.355(s)   \\
+            \hline
+        \end{tabular}
+        \caption{\label{tab:\problemone~Results}\problemone~Results}
+    \end{table}
+    \begin{figure}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{smallgridworld.png}
+            \caption{Small Grid World}\label{Fig:Small Grid World}
+        \end{minipage}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=0.99\linewidth]{policyiterationreward.png}
+            \caption{Policy Iteration~\problemone}\label{Fig:Policy Iteration~\problemone}
+        \end{minipage}
+    \end{figure}
+
+    \begin{figure}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{valueiterationreward.png}
+            \caption{Value Iteration~\problemone}\label{Fig:Value Iteration~\problemone}
+        \end{minipage}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{qlearningreward.png}
+            \caption{Q-Learning~\problemone}\label{Fig:Q-Learning~\problemone}
+        \end{minipage}
+    \end{figure}
+    \begin{figure}
+        \begin{minipage}{1\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{qlearningdeepdive.png}
+            \caption{Q Learning Analysis~\problemone}\label{Fig:Q-Learning DD~\problemone}
+        \end{minipage}
+    \end{figure}
+
+    \subsection{\problemtwo}
+    In the section I will analyze the results of the three algorithms versus the \problemtwo Problem.
+    In my estimation this was a far more interesting test of the various methods to determine the best reward/policy.
+    The reason for this is because the state space exists on a continuous domain and not a discreet one.
+    See figure~\ref{Fig:Mountain Car} as an example visualization of the statespace and agent.
+    Note that the black line is the cosine curve representing the "mountain," and the red block is the "car" that the agent
+    is manipulating through the actions described earlier in this paper attempting to determine the sequence of actions
+    necessary to use the physics of the environment to get to the top of the curve on the right (the goal state.)
+    Because there are essentially an infinite number of states that can be generated in an environment or observed, then
+    other methods would need to be used in order to properly enumerate and explore the environment to determine an optimal
+    reward or policy.
+    To this end, I have simplified this for the sake of completing in a non-infinite amount of time my analysis.
+    From the mountain car environment I have sampled 5000 individual state observations and collected them as a set of
+    $<s,a,r,s'>$ vectors.
+    Table~\ref{tab:\problemtwo~Results} shows the results of each of the algorithms in the environment.
+    \begin{table}
+        \centering
         \begin{tabular}{|c| c | c | c |}
             \hline
             & Policy Iteration & Value Iteration & Q-Learning \\
@@ -141,54 +246,8 @@
             Average Processing Time   & 20503.0(s)       & 118.1(s)        & 285.9(s)   \\
             \hline
         \end{tabular}
-    \end{center}
-
-    \begin{itemize}
-        \item How many iterations does it take to converge
-        \item Which one converges faster and why?
-        \item How do I define convergence (delta)
-        \item Do they converge to the same answer
-        \item How did the number of states affect things
-    \end{itemize}
-    \begin{itemize}
-        \item How does it perform especially in comparison to the cases where you knew the model, rewards, and so on?
-        \item What explorations strategies did you choose?
-        \item Did some work better than others?
-    \end{itemize}
-
-
-    \begin{figure}
-        \begin{minipage}{0.5\textwidth}
-            \centering
-            \includegraphics[width=1\linewidth]{smallgridworld.png}
-            \caption{Small Grid World}\label{Fig:Small Grid World}
-        \end{minipage}
-        \begin{minipage}{0.5\textwidth}
-            \centering
-            \includegraphics[width=0.99\linewidth]{policyiterationreward.png}
-            \caption{Policy Iteration \problemone}\label{Fig:Policy Iteration \problemone}
-        \end{minipage}
-    \end{figure}
-
-    \begin{figure}
-        \begin{minipage}{0.5\textwidth}
-            \centering
-            \includegraphics[width=1\linewidth]{valueiterationreward.png}
-            \caption{Value Iteration \problemone}\label{Fig:Value Iteration \problemone}
-        \end{minipage}
-        \begin{minipage}{0.5\textwidth}
-            \centering
-            \includegraphics[width=1\linewidth]{qlearningreward.png}
-            \caption{Q-Learning \problemone}\label{Fig:Q-Learning \problemone}
-        \end{minipage}
-    \end{figure}
-    \begin{figure}
-        \begin{minipage}{1\textwidth}
-            \centering
-            \includegraphics[width=1\linewidth]{qlearningdeepdive.png}
-            \caption{Q Learning Analysis \problemone}\label{Fig:Q-Learning DD \problemone}
-        \end{minipage}
-    \end{figure}
+        \caption{\label{tab:\problemtwo~Results}\problemtwo~Results}
+    \end{table}
 
     \begin{figure}
         \begin{minipage}{0.5\textwidth}
@@ -215,11 +274,13 @@
         \end{minipage}
     \end{figure}
 
-    \begin{wrapfigure}{l}{0.5\textwidth}
-        \centering
-        \includegraphics[width=1\linewidth]{qlearningextended.png}
-        \caption{Q-Learning Deep Dive \problemtwo}\label{Fig:Q-Learning Deep Dive \problemtwo}
-    \end{wrapfigure}
+    \begin{figure}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{qlearningextended.png}
+            \caption{Q-Learning Deep Dive \problemtwo}\label{Fig:Q-Learning Deep Dive \problemtwo}
+        \end{minipage}
+    \end{figure}
 
 
     \section{Conclusion}
