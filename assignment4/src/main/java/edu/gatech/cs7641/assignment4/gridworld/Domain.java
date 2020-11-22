@@ -19,6 +19,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.common.VisualActionObserver;
+import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.shell.visual.VisualExplorer;
@@ -43,6 +44,7 @@ class Domain {
     private SADomain oosaDomain;
     private State initState;
     private int maxSteps;
+    public VisualActionObserver visualActionObserver;
 
     Domain(String domainName) throws InstantiationException {
 
@@ -94,6 +96,7 @@ class Domain {
         if (this.mountainCar != null) {
             Visualizer v = MountainCarVisualizer.getVisualizer(mountainCar);
             VisualActionObserver vob = new VisualActionObserver(v);
+            visualActionObserver = vob;
             vob.initGUI();
         }
 

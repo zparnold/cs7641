@@ -99,17 +99,36 @@
         \item $\alpha$ which controls the learning rate of the respective algorithms
         \item Number of Trials, which dictates the number of times to re-run a learning session with a particular algorithm, the average reward of which is taken as the final result
     \end{itemize}
+    Unless explicitly mentioned all algorithms search in an $\epsilon$-greedy fashion, where $\epsilon = 0.1$
     \subsection{Value Iteration}
     For both problems I used the BURLAP implementation of value iteration to derive the optimal reward values for each state
     according to the Bellman update rule.
     Even though Value Iteration is guaranteed to converge, in order to keep my experiments from taking forever, I leveraged
     from the params above to terminate the updates after a threshold or maxiumum iterations occurs.
     \subsection{Policy Iteration}
+    For both problems I used the BURLAP implementation for Policy iteration passing in from the above section the $\delta$,
+    and max iterations to control the termination provided that we never improve less than $\delta$ in a Learning episode.
     \subsection{Q-Learning}
-
+    Much like the previous two sections, I leveraged the BURLAP implementation of Q-Learning using the params from above
+    which apply to Q-Learning and optimized them for each problem.
 
 
     \section{Analysis}
+    \subsection{\problemone}
+    Results of algorithms:
+    \begin{center}
+        \begin{tabular}{|c| c | c | c |}
+            \hline
+            & Metric                     & Cluster Count & Value \\
+            \hline
+            \hline
+            \problemone & Avg Silhouette Coefficient & 4             & 0.558 \\
+            \hline
+            \problemtwo & Avg Silhouette Coefficient & 3             & 0.687 \\
+            \hline
+        \end{tabular}
+    \end{center}
+
 
     \begin{figure}
         \begin{minipage}{0.5\textwidth}
@@ -144,7 +163,9 @@
         \end{minipage}
     \end{figure}
     \section{Conclusion}
-    In this paper I have explored the tradeoffs between algorithms
+    In this paper I have explored the tradeoffs between several popular MDP solving algorithms in BURLAP.
+    I have compared them in two different novel problems which exercised and demonstrated the differences and similarities
+    in terms of performance of these algorithms.
     \bibliography{bibliography}
     \bibliographystyle{plain}
 \end{document}

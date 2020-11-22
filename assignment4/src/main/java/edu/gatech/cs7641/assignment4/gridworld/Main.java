@@ -1,13 +1,22 @@
 package edu.gatech.cs7641.assignment4.gridworld;
 
+import burlap.behavior.functionapproximation.dense.NormalizedVariableFeatures;
+import burlap.behavior.functionapproximation.dense.fourier.FourierBasis;
+import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.performance.LearningAlgorithmExperimenter;
 import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
+import burlap.behavior.singleagent.learning.lspi.LSPI;
+import burlap.behavior.singleagent.learning.lspi.SARSCollector;
+import burlap.behavior.singleagent.learning.lspi.SARSData;
 import burlap.behavior.singleagent.planning.Planner;
+import burlap.domain.singleagent.mountaincar.MCRandomStateGenerator;
 import burlap.domain.singleagent.mountaincar.MCState;
+import burlap.mdp.auxiliary.StateGenerator;
+import burlap.mdp.core.state.vardomain.VariableDomain;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
 import org.jfree.chart.ChartFactory;
@@ -38,12 +47,17 @@ public class Main {
         // build all necessary components to run a simulation
         Domain domain = new Domain(Config.DOMAIN_NAME);
         SimulatedEnvironment env;
-        if (Config.DOMAIN_NAME == MOUNTAIN_CAR){
+        if (Config.DOMAIN_NAME == MOUNTAIN_CAR) {
             env = new SimulatedEnvironment(domain.getSADomain(), new MCState(domain.getMountainCar().physParams.valleyPos(), 0));
         } else {
             env = new SimulatedEnvironment(domain.getSADomain(), domain.initState());
         }
-        Planner agent = Agent.buildAgent(domain.getSADomain(), domain.maxSteps());
+        Planner agent;
+        if (Config.DOMAIN_NAME == MOUNTAIN_CAR){
+            agent = Agent.buildAgent(domain);
+        } else {
+            agent = Agent.buildAgent(domain.getSADomain(), domain.maxSteps());
+        }
         System.out.println("Enviroment setup");
 
         // create visualizer for the domain in order to interact with
@@ -59,7 +73,9 @@ public class Main {
 
             // process the episode and resent when complete, log the time necessary
             long startTime = System.nanoTime();
-            Episode episode = rollout(agent.planFromState(domain.initState()), env, domain.maxSteps());
+            Episode episode;
+            episode = rollout(agent.planFromState(domain.initState()), env, domain.maxSteps());
+
             env.resetEnvironment();
 
             // divide time down to microseconds and save environement results for plotting
@@ -107,6 +123,7 @@ public class Main {
 
     /**
      * Helper that logs results for a simulation
+     *
      * @param results - List of Results to aggregate
      */
     private static void logResults(List<Result> results) {
@@ -142,6 +159,7 @@ public class Main {
 
     /**
      * Helper that plots results for a simulation
+     *
      * @param results - List of Results to aggregate
      */
     private static void plotResults(List<Result> results) {
