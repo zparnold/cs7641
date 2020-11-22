@@ -1,5 +1,6 @@
 package edu.gatech.cs7641.assignment4.gridworld;
 
+import burlap.behavior.functionapproximation.dense.DenseCrossProductFeatures;
 import burlap.behavior.functionapproximation.dense.NormalizedVariableFeatures;
 import burlap.behavior.functionapproximation.dense.fourier.FourierBasis;
 import burlap.behavior.policy.Policy;
@@ -13,12 +14,18 @@ import burlap.behavior.singleagent.learning.lspi.LSPI;
 import burlap.behavior.singleagent.learning.lspi.SARSCollector;
 import burlap.behavior.singleagent.learning.lspi.SARSData;
 import burlap.behavior.singleagent.planning.Planner;
+import burlap.behavior.singleagent.planning.stochastic.policyiteration.PolicyIteration;
 import burlap.domain.singleagent.mountaincar.MCRandomStateGenerator;
 import burlap.domain.singleagent.mountaincar.MCState;
+import burlap.domain.singleagent.mountaincar.MountainCar;
+import burlap.domain.singleagent.mountaincar.MountainCarVisualizer;
 import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.state.vardomain.VariableDomain;
+import burlap.mdp.singleagent.SADomain;
+import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
+import burlap.visualizer.Visualizer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -34,6 +41,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static burlap.behavior.policy.PolicyUtils.rollout;
+import static edu.gatech.cs7641.assignment4.gridworld.Agent.POLICY_ITERATION;
+import static edu.gatech.cs7641.assignment4.gridworld.Config.GAMMA;
+import static edu.gatech.cs7641.assignment4.gridworld.Config.MAX_DELTA;
 import static edu.gatech.cs7641.assignment4.gridworld.Domain.MOUNTAIN_CAR;
 
 
@@ -47,21 +57,45 @@ public class Main {
         // build all necessary components to run a simulation
         Domain domain = new Domain(Config.DOMAIN_NAME);
         SimulatedEnvironment env;
+        EnvironmentServer environmentServer;
+        SADomain generateDomain;
+        FourierBasis fb;
+        SARSData dataset;
         if (Config.DOMAIN_NAME == MOUNTAIN_CAR) {
-            env = new SimulatedEnvironment(domain.getSADomain(), new MCState(domain.getMountainCar().physParams.valleyPos(), 0));
+            MountainCar mcGen = new MountainCar();
+            generateDomain = mcGen.generateDomain();
+            StateGenerator rStateGen = new MCRandomStateGenerator(mcGen.physParams);
+            SARSCollector collector = new SARSCollector.UniformRandomSARSCollector(generateDomain);
+            dataset = collector.collectNInstances(rStateGen, generateDomain.getModel(), 5000, 20, null);
+
+            NormalizedVariableFeatures features = new NormalizedVariableFeatures()
+                    .variableDomain("x", new VariableDomain(mcGen.physParams.xmin, mcGen.physParams.xmax))
+                    .variableDomain("v", new VariableDomain(mcGen.physParams.vmin, mcGen.physParams.vmax));
+            fb = new FourierBasis(features, 4);
+
+            LSPI lspi = new LSPI(generateDomain, 0.99, new DenseCrossProductFeatures(fb, 3), dataset);
+            Visualizer v = MountainCarVisualizer.getVisualizer(mcGen);
+            VisualActionObserver vob = new VisualActionObserver(v);
+            vob.initGUI();
+            env = new SimulatedEnvironment(generateDomain,
+                    new MCState(mcGen.physParams.valleyPos(), 0));
+            environmentServer = new EnvironmentServer(env, vob);
         } else {
             env = new SimulatedEnvironment(domain.getSADomain(), domain.initState());
         }
         Planner agent;
-        if (Config.DOMAIN_NAME == MOUNTAIN_CAR){
-            agent = Agent.buildAgent(domain);
+        LSPI lspi;
+        if (Config.DOMAIN_NAME == MOUNTAIN_CAR && Config.AGENT_NAME == POLICY_ITERATION){
+            lspi = new LSPI(generateDomain, GAMMA, new DenseCrossProductFeatures(fb, 3), dataset);
+        } else if (Config.DOMAIN_NAME == MOUNTAIN_CAR && Config.AGENT_NAME != POLICY_ITERATION){
+            agent = (Planner)Agent.buildAgent(domain);
         } else {
             agent = Agent.buildAgent(domain.getSADomain(), domain.maxSteps());
         }
         System.out.println("Enviroment setup");
 
         // create visualizer for the domain in order to interact with
-        if (Config.VISUALIZE) {
+        if (Config.VISUALIZE && !(Config.DOMAIN_NAME == MOUNTAIN_CAR)) {
             domain.visualizeDomain();
             domain.visualizeValueFunction(agent);
         }
@@ -74,8 +108,15 @@ public class Main {
             // process the episode and resent when complete, log the time necessary
             long startTime = System.nanoTime();
             Episode episode;
-            episode = rollout(agent.planFromState(domain.initState()), env, domain.maxSteps());
+            if (Config.DOMAIN_NAME == MOUNTAIN_CAR){
+//                lspi = new LSPI(generateDomain, GAMMA, new DenseCrossProductFeatures(fb, 3), dataset);
+//                Policy p = lspi.runPolicyIteration(10, MAX_DELTA);
+//                episode = rollout(p, environmentServer);
+                episode = rollout(agent.planFromState(domain.initState()), env, domain.maxSteps());
 
+            } else {
+                episode = rollout(agent.planFromState(domain.initState()), env, domain.maxSteps());
+            }
             env.resetEnvironment();
 
             // divide time down to microseconds and save environement results for plotting

@@ -3,6 +3,7 @@ package edu.gatech.cs7641.assignment4.gridworld;
 import burlap.behavior.functionapproximation.dense.DenseCrossProductFeatures;
 import burlap.behavior.functionapproximation.dense.NormalizedVariableFeatures;
 import burlap.behavior.functionapproximation.dense.fourier.FourierBasis;
+import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.lspi.LSPI;
 import burlap.behavior.singleagent.learning.lspi.SARSCollector;
 import burlap.behavior.singleagent.learning.lspi.SARSData;
@@ -11,6 +12,7 @@ import burlap.behavior.singleagent.learning.tdmethods.SarsaLam;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.singleagent.planning.stochastic.policyiteration.PolicyIteration;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
+import burlap.domain.singleagent.blocksworld.BlocksWorld;
 import burlap.domain.singleagent.mountaincar.MCRandomStateGenerator;
 import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.state.vardomain.VariableDomain;
@@ -54,10 +56,14 @@ class Agent {
         }
     }
 
-    static Planner buildAgent(Domain domain) {
+    static Object buildAgent(Domain domain) {
         switch (AGENT_NAME) {
             case POLICY_ITERATION:
                 return buildPolicyIteration(domain);
+            case VALUE_ITERATION:
+                return buildValueIteration(domain);
+            case Q_LEARNER:
+                return buildQLearner(domain.getSADomain(), 100000);
 
             default:
                 throw new IllegalArgumentException("Invalid planner requested: " + AGENT_NAME);
@@ -87,10 +93,10 @@ class Agent {
 
     }
 
-    private static Planner buildPolicyIteration(Domain domain){
+    private static LearningAgent buildPolicyIteration(Domain domain){
         StateGenerator rStateGen = new MCRandomStateGenerator(domain.getMountainCar().physParams);
         SARSCollector collector = new SARSCollector.UniformRandomSARSCollector(domain.getSADomain());
-        SARSData dataset = collector.collectNInstances(rStateGen, domain.getSADomain().getModel(), 5000, 20, null);
+        SARSData dataset = collector.collectNInstances(rStateGen, domain.getSADomain().getModel(), 5000, 10, null);
 
         NormalizedVariableFeatures features = new NormalizedVariableFeatures()
                 .variableDomain("x", new VariableDomain(domain.getMountainCar().physParams.xmin, domain.getMountainCar().physParams.xmax))
@@ -100,7 +106,7 @@ class Agent {
     }
 
     private static Planner buildValueIteration(Domain domain){
-        SarsaLam s = new SarsaLam(domain.getSADomain(), GAMMA, HASH_FACTORY, INIT_Q_VAL, ALPHA, 30, 0.1);
+        SarsaLam s = new SarsaLam(domain.getSADomain(), GAMMA, HASH_FACTORY, INIT_Q_VAL, ALPHA, 10, 0.1);
         s.initializeForPlanning(1);
         return s;
     }

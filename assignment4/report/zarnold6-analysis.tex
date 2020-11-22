@@ -35,6 +35,7 @@
 
     \section{Problem Descriptions}
     In this section I will talk about the different problems I will be analyzing and why they are interesting.
+
     \subsection{\problemone}
     This problem is fairly classic in reinforcement learning algorithm analysis.
     The domain of this problem is a 10 x 10 matrix of squares representing a grid which is a subset of the world.
@@ -77,6 +78,7 @@
         \item Move Forwards
         \item Do Nothing
     \end{itemize}
+
     \subsubsection{Why is this problem interesting?}
     This problem Is interesting given that it has a large number of potential states.
     By large, I mean that it has an infinite number of states given that it is a continuous domain modeled by the cosine curve.
@@ -91,6 +93,7 @@
     \section{Algorithms}
     In this section we will talk about the algorithms I will be using to analyze these problems as well as the parameters
     that I will vary in search of an optimal solution to these problems.
+
     \subsection{Parameter Exploration}
     \begin{itemize}
         \item $\gamma$ which is the discount factor where $\gamma \in [0,1]$ and manages the explore/exploit dilemma in RL where high values favor long-term rewards, and low values optimize for greedier short-term rewards
@@ -100,34 +103,58 @@
         \item Number of Trials, which dictates the number of times to re-run a learning session with a particular algorithm, the average reward of which is taken as the final result
     \end{itemize}
     Unless explicitly mentioned all algorithms search in an $\epsilon$-greedy fashion, where $\epsilon = 0.1$
+
     \subsection{Value Iteration}
     For both problems I used the BURLAP implementation of value iteration to derive the optimal reward values for each state
     according to the Bellman update rule.
     Even though Value Iteration is guaranteed to converge, in order to keep my experiments from taking forever, I leveraged
     from the params above to terminate the updates after a threshold or maxiumum iterations occurs.
+
     \subsection{Policy Iteration}
     For both problems I used the BURLAP implementation for Policy iteration passing in from the above section the $\delta$,
     and max iterations to control the termination provided that we never improve less than $\delta$ in a Learning episode.
+
     \subsection{Q-Learning}
     Much like the previous two sections, I leveraged the BURLAP implementation of Q-Learning using the params from above
     which apply to Q-Learning and optimized them for each problem.
 
 
     \section{Analysis}
+
     \subsection{\problemone}
     Results of algorithms:
+    Due to the number of states, everything listed below is the average of 10 repeated trials as opposed to 100 for \problemone.
     \begin{center}
         \begin{tabular}{|c| c | c | c |}
             \hline
-            & Metric                     & Cluster Count & Value \\
+            & Policy Iteration & Value Iteration & Q-Learning \\
             \hline
             \hline
-            \problemone & Avg Silhouette Coefficient & 4             & 0.558 \\
+            Average Number of Actions & 164              & 37530           & 47624      \\
             \hline
-            \problemtwo & Avg Silhouette Coefficient & 3             & 0.687 \\
+            Average Reward            & 100              & 100             & 100        \\
+            \hline
+            Best Number of Actions    & 164              & 1683            & 18646      \\
+            \hline
+            Best Reward               & 100              & 100             & 100        \\
+            \hline
+            Average Processing Time   & 20503.0(s)       & 118.1(s)        & 285.9(s)   \\
             \hline
         \end{tabular}
     \end{center}
+
+    \begin{itemize}
+        \item How many iterations does it take to converge
+        \item Which one converges faster and why?
+        \item How do I define convergence (delta)
+        \item Do they converge to the same answer
+        \item How did the number of states affect things
+    \end{itemize}
+    \begin{itemize}
+        \item How does it perform especially in comparison to the cases where you knew the model, rewards, and so on?
+        \item What explorations strategies did you choose?
+        \item Did some work better than others?
+    \end{itemize}
 
 
     \begin{figure}
@@ -162,6 +189,39 @@
             \caption{Q Learning Analysis \problemone}\label{Fig:Q-Learning DD \problemone}
         \end{minipage}
     \end{figure}
+
+    \begin{figure}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{valueiterproblem2.png}
+            \caption{Value Iteration \problemtwo}\label{Fig:Value Iteration \problemtwo}
+        \end{minipage}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{policyiterproblem2.png}
+            \caption{Policy Iteration \problemone}\label{Fig:Policy Iteration \problemtwo}
+        \end{minipage}
+    \end{figure}
+    \begin{figure}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{mcgif.png}
+            \caption{Mountain Car Domain}\label{Fig:Mountain Car}
+        \end{minipage}
+        \begin{minipage}{0.5\textwidth}
+            \centering
+            \includegraphics[width=1\linewidth]{qlearningproblem2.png}
+            \caption{Q-Learning \problemtwo}\label{Fig:Q-Learning \problemtwo}
+        \end{minipage}
+    \end{figure}
+
+    \begin{wrapfigure}{l}{0.5\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{qlearningextended.png}
+        \caption{Q-Learning Deep Dive \problemtwo}\label{Fig:Q-Learning Deep Dive \problemtwo}
+    \end{wrapfigure}
+
+
     \section{Conclusion}
     In this paper I have explored the tradeoffs between several popular MDP solving algorithms in BURLAP.
     I have compared them in two different novel problems which exercised and demonstrated the differences and similarities
